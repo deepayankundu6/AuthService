@@ -13,9 +13,11 @@ const getCrossAccountCredentials = async (roleName) => {
       if (err) reject(err);
       else {
         resolve({
+          Version: 1,
           aws_access_key_id: data.Credentials.AccessKeyId,
           aws_secret_access_key: data.Credentials.SecretAccessKey,
           aws_session_token: data.Credentials.SessionToken,
+          Expiration: data.Expiration
         });
       }
     });
@@ -64,10 +66,10 @@ module.exports.index = async () => {
   try {
     let roleFromSM = await getSecret(role)
     const roleARN = JSON.parse(roleFromSM).RoleName
-    const cred = await getCrossAccountCredentials(roleARN);
+    const credentials = await getCrossAccountCredentials(roleARN);
     response = {
       statusCode: 200,
-      body: JSON.stringify(cred).replaceAll(":", "="),
+      body: JSON.stringify(credentials),
     }
   } catch (err) {
     console.log("Some error occured: ", err)
