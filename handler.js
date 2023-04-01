@@ -63,13 +63,11 @@ module.exports.index = async () => {
   let response;
   try {
     let roleFromSM = await getSecret(role)
-    console.log(roleFromSM)
-    console.log(JSON.stringify(roleFromSM))
-    console.log(roleFromSM.RoleName)
-    const cred = await getCrossAccountCredentials(roleFromSM.RoleName);
+    const roleARN = JSON.parse(roleFromSM).RoleName
+    const cred = await getCrossAccountCredentials(roleARN);
     response = {
       statusCode: 200,
-      body: JSON.stringify(cred).replace(":", "="),
+      body: JSON.stringify(cred).replaceAll(":", "="),
     }
   } catch (err) {
     console.log("Some error occured: ", err)
