@@ -56,7 +56,6 @@ const getSecret = async (secretName) => {
       // Deal with the exception here, and/or rethrow at your discretion.
       throw err;
   }
-
 }
 
 module.exports.index = async () => {
