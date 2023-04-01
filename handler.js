@@ -13,7 +13,6 @@ const getCrossAccountCredentials = async (roleName) => {
       if (err) reject(err);
       else {
         resolve({
-          Version: 1,
           aws_access_key_id: data.Credentials.AccessKeyId,
           aws_secret_access_key: data.Credentials.SecretAccessKey,
           aws_session_token: data.Credentials.SessionToken,
