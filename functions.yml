@@ -1,0 +1,28 @@
+index:
+  handler: handler.index
+  memorySize: 128
+  timeout: 30
+  logRetentionInDays: 30
+  iamRoleStatementsName: LambdaAuthRole
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sts:AssumeRole
+      Resource:
+        - arn:aws:iam::${aws:accountId}:role/Console_Admin
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource:
+        - arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:prod/*
+  events:
+    - http:
+        path: /users/authenticate
+        method: get
+        cors:
+          origin: "*"
+          headers:
+            - x-api-key
+          allowCredentials: true
+          # Caches on browser and proxy for 10 minutes and doesnt allow proxy to serve out of date content
+          cacheControl: "max-age=600, s-maxage=600, proxy-revalidate"
