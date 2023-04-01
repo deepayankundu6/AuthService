@@ -59,7 +59,7 @@ const getSecret = async (secretName) => {
 
 }
 
-module.exports.index = async (event) => {
+module.exports.index = async () => {
   console.log("Lambda execution started!!!")
   let response;
   try {
