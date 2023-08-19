@@ -1,6 +1,6 @@
 index:
   handler: handler.index
-  memorySize: 128
+  memorySize: 256
   timeout: 30
   logRetentionInDays: 30
   iamRoleStatementsName: LambdaAuthRole
@@ -14,7 +14,7 @@ index:
       Action:
         - secretsmanager:GetSecretValue
       Resource:
-        - arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:prod/*
+        - arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${self:provider.stage}/*
   events:
     - http:
         path: /users/authenticate

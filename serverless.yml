@@ -11,10 +11,10 @@ provider:
   name: aws
   runtime: nodejs16.x
   environment:
-    RoleName: prod/role_name
-  # you can overwrite defaults here
+    RoleName:  ${self:provider.stage}/role_name
+    REGION: ap-south-1
   stage: prod
-  region: ap-south-1
+  region:  ${self:provider.environment.REGION}
 
 custom:
   prune:

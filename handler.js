@@ -24,7 +24,7 @@ const getCrossAccountCredentials = async (roleName) => {
 }
 
 const getSecret = async (secretName) => {
-  const config = { region: "ap-south-1" }
+  const config = { region: process.env.REGION }
   var secret, decodedBinarySecret;
   let secretsManager = new SecretsManager(config);
   try {
@@ -64,7 +64,7 @@ module.exports.index = async () => {
   let response;
   try {
     let roleFromSM = await getSecret(role)
-    const roleARN = JSON.parse(roleFromSM).RoleName
+    const roleARN = JSON.parse(roleFromSM).AuthRole
     const credentials = await getCrossAccountCredentials(roleARN);
     response = {
       statusCode: 200,
@@ -72,9 +72,15 @@ module.exports.index = async () => {
     }
   } catch (err) {
     console.log("Some error occured: ", err)
+
     response = {
       statusCode: 500,
-      body: JSON.stringify('Some error occured'),
+      body: JSON.stringify({
+        Message: err.message,
+        Code: err.Code,
+        RequestId: err.code,
+        Time: err.time
+      }),
     }
   }
   return response;
