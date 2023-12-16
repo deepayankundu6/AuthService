@@ -66,7 +66,7 @@ const notifySubscriber = async () => {
   const params = {
     Message: `Dear AWS Admin,
     The AWS authentication lambda has been used for generating the auth credential for getting programmatic access to you AWS infrastructure.
-    If not intended please take action immediately else it might cause financial damage to you
+    If not intended please take action immediately else it might cause any financial damage to you.
     Thanks & Regards
     AWS Authentication Lambda`,
     Subject: 'AWS authentication lambda used for generating credentials',
