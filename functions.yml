@@ -9,12 +9,17 @@ index:
       Action:
         - sts:AssumeRole
       Resource:
-        - arn:aws:iam::${aws:accountId}:role/Console_Admin
+        - arn:aws:iam::${aws:accountId}:role/*
     - Effect: Allow
       Action:
         - secretsmanager:GetSecretValue
       Resource:
         - arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${self:provider.stage}/*
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource:
+        - arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.TopicName}
   events:
     - http:
         path: /users/authenticate

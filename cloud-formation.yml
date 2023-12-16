@@ -1,0 +1,12 @@
+Resources: 
+  NotifierTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${file(env.yml):TopicName}
+      
+  MySubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${file(env.yml):SubscriberEmail}
+        Protocol: email
+        TopicArn: !Ref 'NotifierTopic'

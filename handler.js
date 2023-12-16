@@ -1,6 +1,8 @@
 'use strict';
-const { STS, SecretsManager } = require('aws-sdk');
+const { STS, SecretsManager, SNS } = require('aws-sdk');
+
 const role = process.env.RoleName;
+
 const getCrossAccountCredentials = async (roleName) => {
   const sts = new STS();
   return new Promise((resolve, reject) => {
@@ -59,6 +61,37 @@ const getSecret = async (secretName) => {
   }
 }
 
+const notifySubscriber = async () => {
+  // Create publish parameters
+  const params = {
+    Message: `Dear AWS Admin,
+    The AWS authentication lambda has been used for generating the auth credential and geeting programatic access to you AWS infrastructure.
+    If not intended please take action immediately else it might cause financial damage to you
+    Thanks & Regards
+    AWS Authentication Lambda`,
+    Subject: 'AWS authentication lambda used for generating credentials',
+    TargetArn: process.env.TopicARN
+  };
+
+  // Create promise and SNS service object
+  const publishTextPromise = new SNS().publish(params).promise();
+
+  // returns promise's fulfilled/rejected states
+  return new Promise((resolve, reject) => {
+
+    publishTextPromise.then(
+      function (data) {
+        console.log(`Notifed the subscribers of the topic ${params.TopicArn}`);
+        console.log("MessageID is " + data.MessageId);
+        resolve()
+      }).catch(
+        function (err) {
+          reject(err);
+        })
+  })
+
+}
+
 module.exports.index = async () => {
   console.log("Lambda execution started!!!")
   let response;
@@ -66,6 +99,8 @@ module.exports.index = async () => {
     let roleFromSM = await getSecret(role)
     const roleARN = JSON.parse(roleFromSM).AuthRole
     const credentials = await getCrossAccountCredentials(roleARN);
+    await notifySubscriber();
+
     response = {
       statusCode: 200,
       body: JSON.stringify(credentials),
@@ -85,3 +120,4 @@ module.exports.index = async () => {
   }
   return response;
 };
+
