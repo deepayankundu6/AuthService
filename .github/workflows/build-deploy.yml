@@ -12,16 +12,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: echo "build started"
+      - run: echo "Build started"
       - run: npm i
       - run: npm i serverless@3 -g
-      - run: echo "dependency install completed"
-      - name: deploy to aws
+      - run: echo "Dependency install completed"
+      - name: Configure and Deploy
         run: |
           echo "Configuring aws cli"
-          bash getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
+          chmod u+r+x getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
           aws --version
-      - run: echo "deploying using serverless."
       - run: |
+          echo "Deploying using serverless."
           sls deploy --force
           echo "deployment completed successsfully"
