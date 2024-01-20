@@ -18,7 +18,7 @@ jobs:
       - run: echo "Configuring aws CLI"      
       - run: aws --version
       - name: Configuring AWS credentials
-        shell: bash
+        shell: cmd
         run: getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
       - name: Deploying into AWS
         run: |
@@ -27,6 +27,6 @@ jobs:
             echo "Deployment completed successsfully"
             echo "Removing credentials"            
       - name: Removing credentials
-        shell: bash
+        shell: cmd
         run: removeCred.sh
           
