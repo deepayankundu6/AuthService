@@ -1,5 +1,10 @@
 name: Build and Delpoy app
 run-name: ${{ github.actor }}
+env:
+  AWS_DEFAULT_REGION: ""
+  AWS_SESSION_TOKEN: ""
+  AWS_ACCESS_KEY_ID: ""
+  AWS_SECRET_ACCESS_KEY: ""
 on:
   push:
     branches: [master]
