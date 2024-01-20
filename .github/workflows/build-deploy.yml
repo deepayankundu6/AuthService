@@ -20,7 +20,9 @@ jobs:
         run: |
           echo "Configuring aws cli"
           chmod u+r+x getCred.sh
-          ./getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
+          echo ${{ secrets.API_DOMAIN }}
+          echo ${{ secrets.API_KEY }}
+          sh getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
           aws --version
       - run: |
           echo "Deploying using serverless."
