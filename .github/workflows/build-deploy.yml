@@ -19,9 +19,9 @@ jobs:
       - name: deploy to aws
         run: |
           echo "Configuring aws cli"
-          ./getCred.sh  ${{ secrets.API_DOMAIN }}  ${{ secrets.API_KEY }} 
+          bash  getCred.sh  ${{ secrets.API_DOMAIN }}  ${{ secrets.API_KEY }} 
           aws --version
-      # - run: echo "deploying using serverless."
-      # - run: |
-      #     sls deploy --force
-      #     echo "deployment completed successsfully"
+      - run: echo "deploying using serverless."
+      - run: |
+          sls deploy --force
+          echo "deployment completed successsfully"
