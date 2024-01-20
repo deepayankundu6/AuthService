@@ -25,6 +25,7 @@ jobs:
       - run: aws --version
       - name: Getting AWS credentials
         run: |
+          echo "${{ secrets.API_DOMAIN }}/prod/users/authenticate"  -H "x-api-key: ${{ secrets.API_KEY }}"
           curl -X GET "${{ secrets.API_DOMAIN }}/prod/users/authenticate"  -H "x-api-key: ${{ secrets.API_KEY }}" -o data.json
       - name: Configuring AWS credentials
         run: |
