@@ -3,7 +3,6 @@ run-name: ${{ github.actor }}
 on:
   push:
     branches: [master]
-
 jobs:
   workflow:
     runs-on: windows-2022
@@ -18,13 +17,16 @@ jobs:
       - run: echo "Dependency install completed"
       - run: echo "Configuring aws CLI"      
       - run: aws --version
-      - run: getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
+      - name: Configuring AWS credentials
         shell: bash
+        run: getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
       - name: Deploying into AWS
         run: |
             echo "Deploying using serverless."
             sls deploy --force
             echo "Deployment completed successsfully"
-            echo "Removing credentials"
-            removeCred.sh
+            echo "Removing credentials"            
+      - name: Removing credentials
+        shell: bash
+        run: removeCred.sh
           
