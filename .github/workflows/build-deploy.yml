@@ -23,9 +23,6 @@ jobs:
       - name: Deploying into AWS
         run: |
             echo "Deploying using serverless."
-            echo "Region: "
-            echo AWS_DEFAULT_REGION
-            ls
             npx sls deploy --force
             echo "Deployment completed successsfully"
             echo "Removing credentials"            

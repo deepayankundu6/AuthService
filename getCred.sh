@@ -5,5 +5,6 @@ setx AWS_SESSION_TOKEN $(jq -r '.aws_session_token' <<<"$RESPONSE")
 setx AWS_ACCESS_KEY_ID $(jq -r '.aws_access_key_id' <<<"$RESPONSE") 
 setx AWS_SECRET_ACCESS_KEY $(jq -r '.aws_secret_access_key' <<<"$RESPONSE")
 setx AWS_DEFAULT_OUTPUT json
+echo "AWS region: $AWS_DEFAULT_REGION"
 
 
