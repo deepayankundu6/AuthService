@@ -1,0 +1,7 @@
+#!/bin/bash
+
+setx AWS_DEFAULT_REGION ''
+setx AWS_SESSION_TOKEN  ''
+setx AWS_ACCESS_KEY_ID  ''
+setx AWS_SECRET_ACCESS_KEY ''
+setx AWS_DEFAULT_OUTPUT ''
