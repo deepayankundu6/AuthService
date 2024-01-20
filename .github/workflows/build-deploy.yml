@@ -16,16 +16,15 @@ jobs:
       - run: npm i
       - run: npm i serverless@3 -g
       - run: echo "Dependency install completed"
-      - name: Configure and Deploy
+      - run: echo "Configuring aws CLI"      
+      - run: aws --version
+      - run: getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
+        shell: bash
+      - name: Deploying into AWS
         run: |
-          dir
-          echo "Configuring aws cli"
-          getCred.sh ${{ secrets.API_DOMAIN }} ${{ secrets.API_KEY }} 
-          aws --version
-      - run: |
-          echo "Deploying using serverless."
-          sls deploy --force
-          echo "Deployment completed successsfully"
-          echo "Removing credentials"
-          removeCred.sh
+            echo "Deploying using serverless."
+            sls deploy --force
+            echo "Deployment completed successsfully"
+            echo "Removing credentials"
+            removeCred.sh
           
