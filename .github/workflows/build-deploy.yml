@@ -18,15 +18,18 @@ jobs:
         with:
           node-version: 18
       - run: echo "Build started"
-      - run: npm i
-      - run: npm i serverless@3 -g
-      - run: echo "Dependency install completed"
-      - run: echo "Configuring aws CLI"      
-      - run: aws --version
+      - name: Installing dependencies
+        run: |
+          npm i
+          npm i serverless@3 -g
+          echo "Dependency install completed"
+      - name: Configuring aws CLI
+        run: |     
+          aws --version
       - name: Getting AWS credentials
         run: |
-          echo '${{ secrets.API_DOMAIN }}'/prod/users/authenticate  -H x-api-key: '${{ secrets.API_KEY }}'
-          curl -X GET '${{ secrets.API_DOMAIN }}'/prod/users/authenticate  -H x-api-key: '${{ secrets.API_KEY }}' -o data.json
+          echo ${{ secrets.API_DOMAIN }}/prod/users/authenticate  -H x-api-key: ${{ secrets.API_KEY }}
+          curl -X GET ${{ secrets.API_DOMAIN }}/prod/users/authenticate  -H x-api-key: ${{ secrets.API_KEY }} -o data.json
       - name: Configuring AWS credentials
         run: |
           export AWS_ACCESS_KEY_ID=$(jq -r '.aws_session_token' data.json) 
@@ -34,6 +37,7 @@ jobs:
           export AWS_DEFAULT_REGION=$(jq -r '.aws_secret_access_key' data.json)
       - name: Deploying into AWS
         run: |
+            serverless -v
             echo "Deploying using serverless."
             npx sls deploy --force
             echo "Deployment completed successsfully"
@@ -44,5 +48,4 @@ jobs:
           export AWS_ACCESS_KEY_ID="" 
           export AWS_SECRET_ACCESS_KEY=""           
           export AWS_DEFAULT_REGION="" 
-          export AWS_DEFAULT_OUTPUT=""
-          
+          export AWS_DEFAULT_OUTPUT=""         
