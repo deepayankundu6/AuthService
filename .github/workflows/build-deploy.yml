@@ -40,12 +40,13 @@ jobs:
             serverless -v
             echo "Deploying using serverless."
             npx sls deploy --force
-            echo "Deployment completed successsfully"
-            echo "Removing credentials"            
+            echo "Deployment completed successsfully"            
       - name: Removing credentials
         run: | 
+          echo "Removing credentials"
           export AWS_SESSION_TOKEN="" 
           export AWS_ACCESS_KEY_ID="" 
           export AWS_SECRET_ACCESS_KEY=""           
           export AWS_DEFAULT_REGION="" 
-          export AWS_DEFAULT_OUTPUT=""         
+          export AWS_DEFAULT_OUTPUT=""  
+          echo "All AWS credentials removing"       
