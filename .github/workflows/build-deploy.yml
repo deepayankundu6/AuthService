@@ -38,7 +38,7 @@ jobs:
         run: |
             serverless -v
             echo "Deploying using serverless."
-            npx sls deploy --force
+            serverless deploy --force
             echo "Deployment completed successsfully"            
       - name: Removing credentials
         run: | 

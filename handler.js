@@ -1,5 +1,6 @@
 'use strict';
-const { STS, SecretsManager, SNS } = require('aws-sdk');
+const awsSdk = require('aws-sdk');
+const { STS, SecretsManager, SNS } = awsSdk;
 
 const role = process.env.RoleName;
 
