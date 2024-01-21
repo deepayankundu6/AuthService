@@ -1,68 +1,65 @@
 'use strict';
-const awsSdk = require('aws-sdk');
-const { STS, SecretsManager, SNS } = awsSdk;
+const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager")
+const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns")
+const { STSClient, AssumeRoleCommand } = require("@aws-sdk/client-sts")
 
-const role = process.env.RoleName;
-
-const getCrossAccountCredentials = async (roleName) => {
-  const sts = new STS();
-  return new Promise((resolve, reject) => {
-    const timestamp = (new Date()).getTime();
-    const params = {
-      RoleArn: roleName,
-      RoleSessionName: `TempRole-${timestamp}`
-    };
-    sts.assumeRole(params, (err, data) => {
-      if (err) reject(err);
-      else {
-        resolve({
-          aws_access_key_id: data.Credentials.AccessKeyId,
-          aws_secret_access_key: data.Credentials.SecretAccessKey,
-          aws_session_token: data.Credentials.SessionToken,
-          Expiration: data.Expiration
-        });
-      }
-    });
-  });
-}
-
-const getSecret = async (secretName) => {
-  const config = { region: process.env.REGION }
-  var secret, decodedBinarySecret;
-  let secretsManager = new SecretsManager(config);
+const getCredentials = async (roleARN) => {
+  console.log("Assuming the role: ", roleARN);
+  const client = new STSClient();
+  const timestamp = (new Date()).getTime();
+  const params = {
+    RoleArn: roleARN,
+    RoleSessionName: `TempRole-${timestamp}`,
+  }
   try {
-    let secretValue = await secretsManager.getSecretValue({ SecretId: secretName }).promise();
-    if ('SecretString' in secretValue) {
-      return secret = secretValue.SecretString;
+    const command = new AssumeRoleCommand(params);
+    const response = await client.send(command);
+    if (response.Credentials) {
+      const tempObj = {
+        aws_access_key_id: response.Credentials.AccessKeyId,
+        aws_secret_access_key: response.Credentials.SecretAccessKey,
+        aws_session_token: response.Credentials.SessionToken,
+        expiration: response.Credentials.Expiration,
+      }
+      return tempObj;
     } else {
-      let buff = new Buffer(secretValue.SecretBinary, 'base64');
-      return decodedBinarySecret = buff.toString('ascii');
+      throw new Error("Unable to assume role: ", roleARN)
     }
   } catch (err) {
-    if (err.code === 'DecryptionFailureException')
-      // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw err;
-    else if (err.code === 'InternalServiceErrorException')
-      // An error occurred on the server side.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw err;
-    else if (err.code === 'InvalidParameterException')
-      // You provided an invalid value for a parameter.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw err;
-    else if (err.code === 'InvalidRequestException')
-      // You provided a parameter value that is not valid for the current state of the resource.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw err;
-    else if (err.code === 'ResourceNotFoundException')
-      // We can't find the resource that you asked for.
-      // Deal with the exception here, and/or rethrow at your discretion.
-      throw err;
+    console.log("Some error occured while assuming the role: ", err);
+    throw new Error(err)
   }
 }
 
-const notifySubscriber = async () => {
+const getSecret = async (secretName) => {
+  console.log("Fetching the role name from secretes manager: ", secretName);
+  const client = new SecretsManagerClient();
+  try {
+    const response = await client.send(
+      new GetSecretValueCommand({
+        SecretId: secretName,
+      }),
+    );
+    if (response) {
+      if (response.SecretString) {
+        const role = JSON.parse(response.SecretString)
+        return role.AuthRole;
+      }
+      if (response.SecretBinary) {
+        const role = Buffer.from(response.SecretBinary.buffer).toString();
+        return role.AuthRole;
+      }
+    } else {
+      throw new Error("Unable to get the role from the secret managers.")
+    }
+  } catch (error) {
+    console.log("Some error occured while getting the role: ", error);
+    throw new Error(error)
+  }
+}
+
+const notifySubscriber = async (SNSArn) => {
+  console.log("Notifying the user after getting the credentials");
   // Create publish parameters
   const params = {
     Message: `Dear AWS Admin,
@@ -71,36 +68,30 @@ const notifySubscriber = async () => {
     Thanks & Regards
     AWS Authentication Lambda`,
     Subject: 'AWS authentication lambda used for generating credentials',
-    TargetArn: process.env.TopicARN
+    TargetArn: SNSArn
   };
-
-  // Create promise and SNS service object
-  const publishTextPromise = new SNS().publish(params).promise();
-
-  // returns promise's fulfilled/rejected states
-  return new Promise((resolve, reject) => {
-
-    publishTextPromise.then(
-      function (data) {
-        console.log(`Notifed the subscribers of the topic ${params.TopicArn}`);
-        console.log("MessageID is " + data.MessageId);
-        resolve()
-      }).catch(
-        function (err) {
-          reject(err);
-        })
-  })
-
+  try {
+    const publishWrapper = new PublishCommand(params);
+    const snsClient = new SNSClient();
+    const response = await snsClient.send(publishWrapper);
+    if (response.MessageId) {
+      console.log("User successfully notified");
+    } else {
+      throw new Error("Unable to notify the user");
+    }
+  } catch (err) {
+    console.log("Some error occured while notifying the user: ", err);
+    throw new Error(err)
+  }
 }
 
 module.exports.index = async () => {
   console.log("Lambda execution started!!!")
   let response;
   try {
-    let roleFromSM = await getSecret(role)
-    const roleARN = JSON.parse(roleFromSM).AuthRole
-    const credentials = await getCrossAccountCredentials(roleARN);
-    await notifySubscriber();
+    let roleFromSM = await getSecret(process.env.RoleName);
+    const credentials = await getCredentials(roleFromSM);
+    await notifySubscriber(process.env.TopicARN);
 
     response = {
       statusCode: 200,

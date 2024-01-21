@@ -9,19 +9,18 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   environment:
     RoleName:  ${file(env.yml):RoleName}
-    REGION: ${file(env.yml):REGION}
     TopicName: ${file(env.yml):TopicName}
     TopicARN:  arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.TopicName}
   stage: prod
-  region:  ${self:provider.environment.REGION}
+  region:   ${file(env.yml):REGION}
 
 custom:
   prune:
     automatic: true
-    number: 3
+    number: 5
 
   webpack:
     webpackConfig: webpack.config.js
