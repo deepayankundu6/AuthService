@@ -9,7 +9,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs18.x
   environment:
     RoleName:  ${file(env.yml):RoleName}
     REGION: ${file(env.yml):REGION}
