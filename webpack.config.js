@@ -1,13 +1,12 @@
 const slsw = require('serverless-webpack');
-const nodeExternal = require('webpack-node-externals');
+const nodeExternal = require('webpack-node-externals');;
 
-module.exports = {
+const config = {
+    mode: 'production',
+    devtool: 'source-map',
     entry: slsw.lib.entries,
     target: 'node',
-    mode: 'production',
     externals: [nodeExternal()],
-    output: {
-        libraryTarget: 'module',
-        strictModuleErrorHandling: true,
-      }
 }
+
+exports = config;
