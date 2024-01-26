@@ -10,6 +10,7 @@ const getCredentials = async (roleARN: string) => {
   const params = {
     RoleArn: roleARN,
     RoleSessionName: `TempRole-${timestamp}`,
+    DurationSeconds: Number(process.env.DURATION),
   }
   try {
     const command = new AssumeRoleCommand(params);

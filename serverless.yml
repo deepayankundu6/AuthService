@@ -14,6 +14,7 @@ provider:
     RoleName:  ${file(env.yml):RoleName}
     TopicName: ${file(env.yml):TopicName}
     TopicARN:  arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.TopicName}
+    DURATION: ${file(env.yml):DURATION}
   stage: prod
   region:   ${file(env.yml):REGION}
   roleName: ${file(env.yml):RoleName}
