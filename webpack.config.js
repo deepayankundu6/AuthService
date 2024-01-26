@@ -6,11 +6,7 @@ const config = {
     devtool: 'source-map',
     entry: slsw.lib.entries,
     target: 'node',
-    externals: [nodeExternal()],
-    output: {
-        libraryTarget: 'module',
-        strictModuleErrorHandling: true,
-    }
+    externals: [nodeExternal()]
 }
 
 exports = config;
