@@ -24,7 +24,7 @@ custom:
 
   webpack:
     webpackConfig: webpack.config.js
-    includeModules: false
+    includeModules: true
     packager: npm
 
 functions:

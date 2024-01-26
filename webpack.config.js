@@ -7,6 +7,10 @@ const config = {
     entry: slsw.lib.entries,
     target: 'node',
     externals: [nodeExternal()],
+    output: {
+        libraryTarget: 'module',
+        strictModuleErrorHandling: true,
+    }
 }
 
 exports = config;
