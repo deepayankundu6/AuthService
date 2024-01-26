@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "name": "authservice",
   "version": "1.0.0",
   "description": "",
@@ -19,7 +18,7 @@
   },
   "scripts": {
     "start": "serverless offline start --noAuth",
-    "deploy": "serverlessdeploy"
+    "deploy": "serverless deploy"
   },
   "author": "",
   "license": "ISC"
