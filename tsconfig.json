@@ -19,6 +19,9 @@
       "baseUrl": "./",
       "strictPropertyInitialization": false,
       "allowJs": false,
-      "noImplicitAny": true
+      "noImplicitAny": true,
+      "sourceMap": true,
+      "removeComments": true,
+      "preserveConstEnums": true,
     }
   }

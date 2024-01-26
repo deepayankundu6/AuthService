@@ -3,7 +3,7 @@ Authenticate:
   memorySize: 256
   timeout: 30
   logRetentionInDays: 30
-  iamRoleStatementsName: LambdaAuthRole
+  iamRoleStatementsName: AuthLambdaRole
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -22,7 +22,7 @@ Authenticate:
         - arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.TopicName}
   events:
     - http:
-        path: /users/authenticate
+        path: /authenticate/user
         method: get
         cors:
           origin: "*"

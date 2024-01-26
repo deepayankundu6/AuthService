@@ -16,7 +16,8 @@ provider:
     TopicARN:  arn:aws:sns:${aws:region}:${aws:accountId}:${self:provider.environment.TopicName}
   stage: prod
   region:   ${file(env.yml):REGION}
-
+  roleName: ${file(env.yml):RoleName}
+  
 custom:
   prune:
     automatic: true
