@@ -4,7 +4,7 @@ frameworkVersion: "3"
 plugins:
   - serverless-iam-roles-per-function
   - serverless-prune-plugin
-  - serverless-plugin-webpack
+  - serverless-webpack
   - serverless-offline
 
 provider:
@@ -24,8 +24,12 @@ custom:
 
   webpack:
     webpackConfig: webpack.config.js
-    includeModules: true
-    packager: npm
+    packager: 'npm'    
+    includeModules:      
+      forceExclude:        
+        - aws-sdk
+package:  
+  individually: true
 
 functions:
   - ${file(functions.yml)}

@@ -1,9 +1,9 @@
 'use strict';
-const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager");
-const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns");
-const { STSClient, AssumeRoleCommand } = require("@aws-sdk/client-sts");
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { STSClient, AssumeRoleCommand } from "@aws-sdk/client-sts";
 
-const getCredentials = async (roleARN) => {
+const getCredentials = async (roleARN: string) => {
   console.log("Assuming the role: ", roleARN);
   const client = new STSClient();
   const timestamp = (new Date()).getTime();
@@ -23,15 +23,15 @@ const getCredentials = async (roleARN) => {
       }
       return tempObj;
     } else {
-      throw new Error("Unable to assume role: ", roleARN)
+      throw new Error(`Unable to assume role: ${roleARN} `)
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log("Some error occured while assuming the role: ", err);
     throw new Error(err)
   }
 }
 
-const getSecret = async (secretName) => {
+const getSecret = async (secretName: string) => {
   console.log("Fetching the role name from secretes manager: ", secretName);
   const client = new SecretsManagerClient();
   try {
@@ -46,19 +46,19 @@ const getSecret = async (secretName) => {
         return role.AuthRole;
       }
       if (response.SecretBinary) {
-        const role = Buffer.from(response.SecretBinary.buffer).toString();
+        const role: any = Buffer.from(response.SecretBinary.buffer).toString();
         return role.AuthRole;
       }
     } else {
       throw new Error("Unable to get the role from the secret managers.")
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log("Some error occured while getting the role: ", error);
     throw new Error(error)
   }
 }
 
-const notifySubscriber = async (SNSArn) => {
+const notifySubscriber = async (SNSArn: string) => {
   console.log("Notifying the user after getting the credentials");
   // Create publish parameters
   const params = {
@@ -79,7 +79,7 @@ const notifySubscriber = async (SNSArn) => {
     } else {
       throw new Error("Unable to notify the user");
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log("Some error occured while notifying the user: ", err);
     throw new Error(err)
   }
@@ -89,15 +89,15 @@ const authenticateUser = async () => {
   console.log("Lambda execution started!!!")
   let response;
   try {
-    let roleFromSM = await getSecret(process.env.RoleName);
+    let roleFromSM = await getSecret(String(process.env.RoleName));
     const credentials = await getCredentials(roleFromSM);
-    await notifySubscriber(process.env.TopicARN);
+    await notifySubscriber(String(process.env.TopicARN));
 
     response = {
       statusCode: 200,
       body: JSON.stringify(credentials),
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log("Some error occured: ", err)
 
     response = {
@@ -113,4 +113,4 @@ const authenticateUser = async () => {
   return response;
 };
 
-exports.authenticateUser = authenticateUser;
+export { authenticateUser };
