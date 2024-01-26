@@ -1,5 +1,5 @@
 index:
-  handler: handler.index
+  handler: handler.authenticateUser
   memorySize: 256
   timeout: 30
   logRetentionInDays: 30

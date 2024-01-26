@@ -9,7 +9,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: nodejs18.x
   environment:
     RoleName:  ${file(env.yml):RoleName}
     TopicName: ${file(env.yml):TopicName}

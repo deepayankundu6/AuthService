@@ -1,7 +1,7 @@
 'use strict';
-const { SecretsManagerClient, GetSecretValueCommand } = require("@aws-sdk/client-secrets-manager")
-const { SNSClient, PublishCommand } = require("@aws-sdk/client-sns")
-const { STSClient, AssumeRoleCommand } = require("@aws-sdk/client-sts")
+import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager";
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { STSClient, AssumeRoleCommand } from "@aws-sdk/client-sts";
 
 const getCredentials = async (roleARN) => {
   console.log("Assuming the role: ", roleARN);
@@ -85,7 +85,7 @@ const notifySubscriber = async (SNSArn) => {
   }
 }
 
-module.exports.index = async () => {
+const authenticateUser = async () => {
   console.log("Lambda execution started!!!")
   let response;
   try {
@@ -113,3 +113,4 @@ module.exports.index = async () => {
   return response;
 };
 
+export { authenticateUser };
