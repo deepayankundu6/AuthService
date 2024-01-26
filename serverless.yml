@@ -17,7 +17,6 @@ provider:
     DURATION: ${file(env.yml):DURATION}
   stage: prod
   region:   ${file(env.yml):REGION}
-  roleName: ${file(env.yml):RoleName}
   
 custom:
   prune:
