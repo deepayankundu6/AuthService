@@ -10,7 +10,7 @@ const getCredentials = async (roleARN: string) => {
   const params = {
     RoleArn: roleARN,
     RoleSessionName: `TempRole-${timestamp}`,
-    DurationSeconds: Number(process.env.DURATION),
+    DurationSeconds: Number(process.env["DURATION"]),
   }
   try {
     const command = new AssumeRoleCommand(params);
@@ -90,9 +90,9 @@ const authenticateUser = async () => {
   console.log("Lambda execution started!!!")
   let response;
   try {
-    let roleFromSM = await getSecret(String(process.env.RoleName));
+    const roleFromSM = await getSecret(String(process.env["RoleName"]));
     const credentials = await getCredentials(roleFromSM);
-    await notifySubscriber(String(process.env.TopicARN));
+    await notifySubscriber(String(process.env["TopicARN"]));
 
     response = {
       statusCode: 200,
