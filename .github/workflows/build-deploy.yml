@@ -23,6 +23,8 @@ jobs:
           npm i
           npm i serverless@3 -g
           echo "Dependency install completed"
+      - name: Code linting
+        run: npx run lint
       - name: Configuring aws CLI
         run: |     
           aws --version

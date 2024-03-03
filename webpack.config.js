@@ -1,41 +1,41 @@
-const serverlessWebpack = require('serverless-webpack');
-const nodeExternals = require('webpack-node-externals');
-const TerserPlugin = require('terser-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const serverlessWebpack = require("serverless-webpack");
+const nodeExternals = require("webpack-node-externals");
+const TerserPlugin = require("terser-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
-  devtool: 'inline-cheap-module-source-map',
+  devtool: "inline-cheap-module-source-map",
   entry: serverlessWebpack.lib.entries,
-  mode: 'production',
+  mode: "production",
   module: {
-    rules: [{
+    rules: [
+      {
         test: /\.ts$/,
         exclude: /node_modules/,
-        loader: 'ts-loader',
+        loader: "ts-loader",
         options: {
           // disable type checker - we will use it in fork plugin
-          transpileOnly: true
-        }
-      }
+          transpileOnly: true,
+        },
+      },
     ],
   },
   node: false,
   externals: [nodeExternals()],
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin({
-      terserOptions: {
-        keep_classnames: true,
-        keep_fnames: true,
-      }
-    }
-    )],
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          keep_classnames: true,
+          keep_fnames: true,
+        },
+      }),
+    ],
   },
   resolve: {
-    extensions: ['.mjs', '.ts', '.js']
+    extensions: [".mjs", ".ts", ".js"],
   },
-  plugins: [
-    new ForkTsCheckerWebpackPlugin()
-  ],
-  target: 'node',
+  plugins: [new ForkTsCheckerWebpackPlugin()],
+  target: "node",
 };
